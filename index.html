@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitPlanner • Fitness & Diet Planner</title>
+    <meta
+      name="description"
+      content="FitPlanner generates personalized weekly workout and diet suggestions based on your goals."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand" aria-label="FitPlanner home">
+          <div class="brand__mark" aria-hidden="true">
+            <svg class="logo" viewBox="0 0 64 64" role="img" aria-label="FitPlanner logo">
+              <defs>
+                <linearGradient id="g" x1="0" x2="1">
+                  <stop offset="0" stop-color="var(--accent)" />
+                  <stop offset="1" stop-color="var(--accent-2)" />
+                </linearGradient>
+              </defs>
+              <!-- dumbbell -->
+              <rect x="6" y="24" width="10" height="16" rx="4" fill="url(#g)" opacity="0.95" />
+              <rect x="48" y="24" width="10" height="16" rx="4" fill="url(#g)" opacity="0.95" />
+              <rect x="16" y="28" width="6" height="8" rx="3" fill="rgba(255,255,255,0.55)" />
+              <rect x="42" y="28" width="6" height="8" rx="3" fill="rgba(255,255,255,0.55)" />
+              <rect x="22" y="30" width="20" height="4" rx="2" fill="rgba(255,255,255,0.92)" />
+              <circle cx="32" cy="32" r="2" fill="rgba(0,0,0,0.15)" />
+            </svg>
+          </div>
+          <div class="brand__text">
+            <div class="brand__name">FitPlanner</div>
+            <div class="brand__tag">Fitness & Diet Planner</div>
+          </div>
+        </div>
+
+        <div class="topbar__actions">
+          <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle dark mode">
+            <span class="icon" aria-hidden="true" data-icon="moon"></span>
+          </button>
+          <button class="ghost-btn" id="loadSavedBtn" type="button">Load saved</button>
+          <button class="ghost-btn" id="resetBtn" type="button">Reset</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="container">
+      <section class="hero-banner hero-banner--gym reveal">
+        <div class="hero-banner__overlay" aria-hidden="true"></div>
+        <div class="hero-banner__content">
+          <h1 class="hero-banner__title">Fitness &amp; Diet Planner</h1>
+          <p class="hero-banner__tagline">
+            Train smarter. Eat cleaner. Track your wins — one week at a time.
+          </p>
+          <div class="hero-banner__actions">
+            <button class="primary-btn primary-btn--glow" id="ctaGenerate" type="button">
+              Generate My Plan
+            </button>
+            <div class="tiny muted">Takes less than a minute</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="hero reveal" aria-label="Planner">
+        <div class="hero__content">
+          <div class="hero__meta">
+            <div class="pill">Strength • Cardio • Mobility</div>
+            <div class="pill">Vegetarian &amp; Non‑Veg</div>
+            <div class="pill">Save + Track progress</div>
+          </div>
+          <p class="hero__subtitle" style="margin-top: 12px;">
+            Choose your goal and schedule — FitPlanner generates a simple weekly workout plan, diet ideas,
+            and a progress tracker you can save.
+          </p>
+        </div>
+
+        <div class="hero__card card" id="plannerCard">
+          <h2 class="card__title">Create your plan</h2>
+          <p class="card__hint">Pick options below and generate your weekly plan.</p>
+
+          <form id="plannerForm" class="form" autocomplete="off">
+            <div class="form__grid">
+              <label class="field">
+                <span class="field__label">Fitness Goal</span>
+                <select id="goal" required>
+                  <option value="weight_loss">Weight Loss</option>
+                  <option value="muscle_gain">Muscle Gain</option>
+                  <option value="general_fitness">General Fitness</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span class="field__label">Experience Level</span>
+                <select id="level" required>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span class="field__label">Workout Days / Week</span>
+                <select id="days" required>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span class="field__label">Diet Preference</span>
+                <select id="diet" required>
+                  <option value="veg">Vegetarian</option>
+                  <option value="nonveg">Non-Vegetarian</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form__row">
+              <button class="primary-btn" id="generateBtn" type="submit">Generate Plan</button>
+              <button class="secondary-btn" id="saveBtn" type="button" disabled>Save My Plan</button>
+            </div>
+
+            <div class="form__row form__row--compact">
+              <label class="check">
+                <input id="includeWarmup" type="checkbox" checked />
+                <span>Include warm-up &amp; cool-down</span>
+              </label>
+              <label class="check">
+                <input id="showCalories" type="checkbox" checked />
+                <span>Show calorie &amp; protein targets</span>
+              </label>
+            </div>
+
+            <div class="status" role="status" aria-live="polite" id="statusText"></div>
+          </form>
+        </div>
+      </section>
+
+      <section class="grid reveal">
+        <article class="card" aria-labelledby="workoutTitle">
+          <div class="card__head">
+            <h2 class="card__title" id="workoutTitle">
+              <span class="section-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" class="sicon">
+                  <path
+                    d="M7 10V8a2 2 0 0 1 2-2h1V4h4v2h1a2 2 0 0 1 2 2v2h2v4h-2v2a2 2 0 0 1-2 2h-1v2h-4v-2H9a2 2 0 0 1-2-2v-2H5v-4h2Zm2 0h6V8H9v2Zm0 4v2h6v-2H9Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+              Weekly workout plan
+            </h2>
+            <div class="card__tools">
+              <button class="chip-btn" id="printBtn" type="button" disabled>Print</button>
+              <button class="chip-btn" id="exportBtn" type="button" disabled>Export</button>
+            </div>
+          </div>
+          <div class="media-strip" aria-label="Workout inspiration images">
+            <figure class="media">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=700&q=60"
+                alt="Strength training with dumbbells"
+              />
+              <figcaption>Strength</figcaption>
+            </figure>
+            <figure class="media">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="https://images.unsplash.com/photo-1546483875-ad9014c88eba?auto=format&fit=crop&w=700&q=60"
+                alt="Cardio workout on treadmill"
+              />
+              <figcaption>Cardio</figcaption>
+            </figure>
+            <figure class="media">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=900"
+                alt="Woman doing yoga stretching pose on mat"
+              />
+              <figcaption>Mobility</figcaption>
+            </figure>
+          </div>
+          <div id="workoutPlan" class="plan plan--empty">
+            <p class="muted">Generate a plan to see your workouts here.</p>
+          </div>
+        </article>
+
+        <article class="card" aria-labelledby="dietTitle">
+          <div class="card__head">
+            <h2 class="card__title" id="dietTitle">
+              <span class="section-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" class="sicon">
+                  <path
+                    d="M12 2c3.8 0 7 2.5 7 6.3 0 2.3-1.1 4.2-2.8 5.4-.2 4.6-2.8 8.3-6.2 8.3s-6-3.7-6.2-8.3C2.1 12.5 1 10.6 1 8.3 1 4.5 4.2 2 8 2c1.5 0 2.8.4 4 .9 1.2-.5 2.5-.9 4-.9ZM8 4C5.3 4 3 5.7 3 8.3c0 1.4.7 2.7 1.8 3.6a1 1 0 0 1 .4.8c.1 4 2.1 7.3 4.8 7.3s4.7-3.3 4.8-7.3a1 1 0 0 1 .4-.8C17.3 11 18 9.7 18 8.3 18 5.7 15.7 4 13 4c-1.2 0-2.3.3-3.2.8a1 1 0 0 1-1.1 0C10.3 4.3 9.2 4 8 4Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+              Diet suggestions
+            </h2>
+            <div class="card__tools">
+              <div class="tiny muted" id="macroNote"></div>
+            </div>
+          </div>
+          <div class="media-strip" aria-label="Healthy food images">
+            <figure class="media">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=700&q=60"
+                alt="Healthy salad bowl with vegetables"
+              />
+              <figcaption>Meals</figcaption>
+            </figure>
+            <figure class="media">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=700&q=60"
+                alt="Fresh fruits on a table"
+              />
+              <figcaption>Fruits</figcaption>
+            </figure>
+            <figure class="media">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=700&q=60"
+                alt="Protein foods prepared for a healthy diet"
+              />
+              <figcaption>Protein</figcaption>
+            </figure>
+          </div>
+          <div id="dietPlan" class="plan plan--empty">
+            <p class="muted">Generate a plan to see diet ideas here.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="card tracker reveal" aria-labelledby="trackerTitle">
+        <div class="card__head">
+          <h2 class="card__title" id="trackerTitle">
+            <span class="section-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="sicon">
+                <path
+                  d="M4 19a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H5v10h14V11a1 1 0 1 1 2 0v7a1 1 0 0 1-1 1H4Zm17.7-11.3-8 8a1 1 0 0 1-1.4 0l-3-3a1 1 0 1 1 1.4-1.4l2.3 2.3 7.3-7.3a1 1 0 0 1 1.4 1.4Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+            Progress tracker
+          </h2>
+          <div class="card__tools">
+            <div class="tiny muted" id="streakText"></div>
+          </div>
+        </div>
+        <div id="tracker" class="tracker__body plan--empty">
+          <p class="muted">Your tracker will appear after generating a plan.</p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p class="tiny muted">
+          Tip: consistency beats intensity. If anything hurts (sharp pain), stop and adjust.
+        </p>
+      </footer>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
