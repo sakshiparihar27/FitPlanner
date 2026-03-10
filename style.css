@@ -395,6 +395,52 @@ html[data-theme="light"] .media figcaption{
   align-items:center;
 }
 
+.save-inline{
+  margin-top: 18px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:6px;
+}
+.save-inline .secondary-btn{padding-inline:16px}
+
+.bmi-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:12px;
+  margin-bottom: 10px;
+}
+.bmi-grid input{
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 10px 12px;
+}
+.bmi-result{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: rgba(15,23,42,0.45);
+}
+html[data-theme="light"] .bmi-result{background: rgba(248,250,252,0.85)}
+.bmi-result--under{border-color: #38bdf8; color:#e0f2fe;}
+.bmi-result--normal{border-color: var(--accent); color:#bbf7d0;}
+.bmi-result--over{border-color: #facc15; color:#fef9c3;}
+.bmi-result--obese{border-color: #ef4444; color:#fee2e2;}
+.bmi-result--error{border-color: var(--danger); color:#fee2e2;}
+
+.cal-plan .field{max-width:260px}
+.calorie-result{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.calorie-result strong{color: var(--accent-2)}
+
 .footer{margin-top: 22px; padding-bottom: 10px}
 
 .toast{

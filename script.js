@@ -493,6 +493,36 @@ function downloadJson(filename, data) {
   URL.revokeObjectURL(url);
 }
 
+function renderSavedPlanSummary(plan) {
+  const root = $("#savedPlanView");
+  if (!root || !plan) return;
+  const { inputs, week, diet } = plan;
+  const workoutDays = week.filter((d) => d.type === "workout");
+  const firstWorkout = workoutDays[0];
+  root.classList.remove("plan--empty");
+  root.innerHTML = `
+    <div class="tiny muted">Last saved plan:</div>
+    <p class="tiny" style="margin:6px 0 8px;">
+      <strong>${escapeHtml(
+        inputs.goal.replace("_", " ")
+      )}</strong> • ${escapeHtml(inputs.level)} • ${escapeHtml(
+        String(inputs.workoutDays)
+      )} days/week • ${escapeHtml(inputs.diet === "veg" ? "Vegetarian" : "Non‑Veg")}
+    </p>
+    <div class="tiny">
+      <strong>Next workout:</strong>
+      ${
+        firstWorkout
+          ? `${escapeHtml(firstWorkout.day)} – ${escapeHtml(firstWorkout.name)}`
+          : "Will be generated on your next plan."
+      }
+    </div>
+    <div class="tiny" style="margin-top:6px;">
+      <strong>Today’s meal idea:</strong> ${escapeHtml(diet.breakfast)}
+    </div>
+  `;
+}
+
 function scrollToPlanner() {
   const card = $("#plannerCard");
   const goal = $("#goal");
@@ -547,9 +577,17 @@ function bindUI() {
       return;
     }
     savePlan(currentPlan);
+    renderSavedPlanSummary(currentPlan);
     toast("Plan saved on this device.");
-    setStatus("Saved. Use “Load saved” anytime.");
+    setStatus("Plan Saved Successfully.");
   });
+
+  const saveInlineBtn = $("#saveInlineBtn");
+  if (saveInlineBtn) {
+    saveInlineBtn.addEventListener("click", () => {
+      $("#saveBtn").click();
+    });
+  }
 
   $("#loadSavedBtn").addEventListener("click", () => {
     const plan = loadSavedPlan();
@@ -562,6 +600,7 @@ function bindUI() {
     applyInputsToForm(plan.inputs);
     renderAll(plan);
     $("#saveBtn").disabled = false;
+    renderSavedPlanSummary(plan);
     setStatus("Loaded your saved plan.");
     toast("Saved plan loaded.");
   });
@@ -579,6 +618,11 @@ function bindUI() {
     $("#exportBtn").disabled = true;
     $("#macroNote").textContent = "";
     $("#streakText").textContent = "";
+    const savedView = $("#savedPlanView");
+    if (savedView) {
+      savedView.textContent =
+        "No plan saved yet. Generate a plan and use “Save My Plan” to store it on this device.";
+    }
     setStatus("");
     toast("Reset done.");
   });
@@ -598,9 +642,73 @@ function bindUI() {
     applyInputsToForm(saved.inputs);
     renderAll(saved);
     $("#saveBtn").disabled = false;
+    renderSavedPlanSummary(saved);
     setStatus("Loaded your saved plan. Adjust options and regenerate anytime.");
   } else {
     setStatus("Select your preferences and generate your plan.");
+  }
+
+  const bmiBtn = $("#bmiBtn");
+  if (bmiBtn) {
+    bmiBtn.addEventListener("click", () => {
+      const h = Number.parseFloat($("#bmiHeight").value);
+      const w = Number.parseFloat($("#bmiWeight").value);
+      const out = $("#bmiResult");
+      if (!out) return;
+      out.className = "bmi-result tiny";
+      if (!h || !w || h <= 0 || w <= 0) {
+        out.classList.add("bmi-result--error");
+        out.textContent = "Please enter a valid height and weight.";
+        return;
+      }
+      const m = h / 100;
+      const bmi = w / (m * m);
+      let category = "";
+      let cls = "";
+      if (bmi < 18.5) {
+        category = "Underweight";
+        cls = "bmi-result--under";
+      } else if (bmi < 25) {
+        category = "Normal";
+        cls = "bmi-result--normal";
+      } else if (bmi < 30) {
+        category = "Overweight";
+        cls = "bmi-result--over";
+      } else {
+        category = "Obese";
+        cls = "bmi-result--obese";
+      }
+      out.classList.add(cls);
+      out.innerHTML = `Your BMI is <strong>${bmi.toFixed(
+        1
+      )}</strong> – ${escapeHtml(category)}. This is a simple guide, not a diagnosis.`;
+    });
+  }
+
+  const calSelect = $("#calorieGoal");
+  if (calSelect) {
+    const out = $("#calorieResult");
+    const updateCal = () => {
+      if (!out) return;
+      let calories = 2200;
+      let desc = "";
+      const v = calSelect.value;
+      if (v === "loss") {
+        calories = 1800;
+        desc = "Gentle deficit for steady weight loss with your workouts.";
+      } else if (v === "maintain") {
+        calories = 2200;
+        desc = "Rough maintenance level for most active adults.";
+      } else if (v === "gain") {
+        calories = 2500;
+        desc = "Small surplus to support muscle gain when training hard.";
+      }
+      out.innerHTML = `Around <strong>${calories} kcal/day</strong>. <span class="muted">${escapeHtml(
+        desc
+      )}</span>`;
+    };
+    calSelect.addEventListener("change", updateCal);
+    updateCal();
   }
 }
 
